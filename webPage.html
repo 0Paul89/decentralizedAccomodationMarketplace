@@ -1,37 +1,55 @@
+<!-- main.html -->
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="styles.css">
-
-    <title>My NFT Marketplace</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <h1>My NFT Marketplace</h1>
-    <form>
-     <label for="search">Search:</label><br>
-     <input type="text" id="search" name="search"><br>
-     <button type="button" onclick="searchNFTs()">Submit</button>
-    </form> 
-    <form>
-     <label for="filter">Filter by:</label><br>
-     <input type="checkbox" id="filter1" name="filter" value="value1">Option 1<br>
-     <input type="checkbox" id="filter2" name="filter" value="value2">Option 2<br>
-     <input type="checkbox" id="filter3" name="filter" value="value3">Option 3<br>
-     <button type="button" onclick="filterNFTs()">Filter</button>
-    </form> 
-
-
-    <button id="connect-button">Connect Wallet</button>
+<head>
+  <title>NFT Marketplace</title>
+  <!-- Link to the CSS stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- NFT marketplace header -->
+  <header>
+    <h1>NFT Marketplace</h1>
+    <!-- Connect button -->
+    <button id="connect-button">Connect to Wallet</button>
+    <!-- Add NFT button (hidden until wallet is connected) -->
     <button id="add-button" style="display:none">Add NFT</button>
-    <div id="listings">
-      <div class="listing">
-        <img src="path/to/image.jpg" alt="NFT Image">
-          <div class="details">
-            <div class="name">NFT Name</div>
-            <div class="price">NFT Price</div>
-          </div>
-      </div>
-    </div>
-  </body>
+    <!-- My account button (hidden until wallet is connected) -->
+    <button id="my-account-button" style="display:none">My Account</button>
+  </header>
+
+  <!-- NFT list container -->
+  <div id="nft-list-container">
+    <h2>NFTs for Sale</h2>
+    <!-- NFT list -->
+    <div id="nft-list"></div>
+  </div>
+
+  <!-- NFT details container -->
+  <div id="nft-details-container">
+    <h2>NFT Details</h2>
+    <!-- NFT details -->
+    <div id="nft-details"></div>
+  </div>
+
+  <!-- My account container (hidden by default) -->
+  <div id="my-account-container" style="display:none">
+    <h2>My Account</h2>
+    <!-- List NFT form -->
+    <form id="list-nft-form">
+      <label for="nft-name">NFT Name:</label><br>
+      <input type="text" id="nft-name" name="nft-name"><br>
+      <label for="nft-price">NFT Price:</label><br>
+      <input type="number" id="nft-price" name="nft-price"><br>
+      <label for="nft-image-url">NFT Image URL:</label><br>
+      <input type="text" id="nft-image-url" name="nft-image-url"><br>
+      <label for="nft-description">NFT Description:</label><br>
+      <textarea id="nft-description" name="nft-description"></textarea><br>
+      <input type="submit" value="List NFT">
+    </form>
+  </div>
+
+  <!-- Link to the JavaScript file -->
+  <script src="main.js"></script>
+</body>
 </html>
