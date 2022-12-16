@@ -1,128 +1,150 @@
-const propertyList = document.querySelector('.property-list');
+// main.js
+import RainbowKit from 'rainbowkit';
 
-function addProperty() {
-  // Create the dialog box
-  const dialog = document.createElement('div');
-  dialog.classList.add('dialog');
-  dialog.innerHTML = `
-    <form>
-      <label for="property-name">Property name:</label><br>
-      <input type="text" id="property-name"><br>
-      <label for="property-attribute-1">Attribute 1:</label><br>
-      <input type="text" id="property-attribute-1"><br>
-      <label for="property-attribute-2">Attribute 2:</label><br>
-      <input type="text" id="property-attribute-2"><br>
-      <label for="property-attribute-3">Attribute 3:</label><br>
-      <input type="text" id="property-attribute-3"><br>
-      <button type="submit">Add</button>
-      <button type="button" id="cancel-button">Cancel</button>
-    </form>
+// Set the contract address and ABI of the NFT marketplace
+const contractAddress = '0x...';
+const contractAbi = [{...}];
+
+// Connect to the Ethereum network using RainbowKit
+const rainbow = new RainbowKit();
+                     
+async function connectToWallet() {
+  // Check if MetaMask is installed and the user is not already connected
+  if (window.ethereum && !window.ethereum.selectedAddress) {
+    // Request connection to MetaMask
+    await window.ethereum.enable();
+  }
+  // Connect to the wallet using RainbowKit
+  await rainbow.connect();
+}
+
+// Create an instance of the NFT marketplace contract
+const contract = new rainbow.web3.eth.Contract(contractAbi, contractAddress);
+
+// Get the list of NFTs for sale
+const nftIds = await contract.methods.getNftIds().call();
+
+// Display the list of NFTs
+const nftList = document.querySelector('#nft-list');
+
+for (const nftId of nftIds) {
+  const nft = await contract.methods.nfts(nftId).call();
+  const nftElement = document.createElement('div');
+  nftElement.innerHTML = `
+    <h3>${nft.name}</h3>
+    <p>Price: ${nft.price}</p>
+    <button class="view-button" data-nft-id="${nftId}">View</button>
   `;
-  document.body.appendChild(dialog);
-
-  // Add an event listener to the "Add" button
-  const form = dialog.querySelector('form');
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-
-    // Get the property name, attribute 1, attribute 2, and attribute 3 from the form
-    const name = form.querySelector('#property-name').value;
-    const attribute1 = form.querySelector('#property-attribute-1').value;
-    const attribute2 = form.querySelector('#property-attribute-2').value;
-    const attribute3 = form.querySelector('#property-attribute-3').value;
-
-    // Create a new property object with the entered values
-    const property = {
-      name: name,
-      attribute1: attribute1,
-      attribute2: attribute2,
-      attribute3: attribute3
-      
-    };
-
-    // Add the property to the property list
-    const div = document.createElement('div');
-    div.classList.add('property');
-    div.innerHTML = `
-      <h3>${property.name}</h3>
-      <p>Attribute 1: ${property.attribute1}</p>
-      <p>Attribute 2: ${property.attribute2}</p>
-      <p>Attribute 3: ${property.attribute3}</p>
-      <button class="delete-button">Delete</button>
-    `;
-    propertyList.appendChild(div);
-
-    // Add an event listener to the "Delete" button
-    const deleteButton = div.querySelector('.delete-button');
-    deleteButton.addEventListener('click', () => {
-      div.remove();
-    });
-
-    // Remove the dialog box
-    dialog.remove();
-  });
-
-  // Add an event listener to the "Cancel" button
-  const cancelButton = dialog.querySelector('#cancel-button');
-  cancelButton.addEventListener('click', () => {
-    // Remove the dialog box
-    dialog.remove();
-  });
+  nftList.appendChild(nftElement);
 }
 
-// Add an event listener to the "Add property" button
-const addButton = document.querySelector('#add-property');
-addButton.addEventListener('click', addProperty);
+// Add an event listener to the "View" buttons
+nftList.addEventListener('click', async event => {
+  if (event.target.className === 'view-button') {
+    // Get the NFT ID from the button's data attribute
+    const nftId = event.target.getAttribute('data-nft-id');
 
-function displayProperties(properties) {
-  // Clear the existing property list
-  propertyList.innerHTML = '';
+    // Get the NFT's details from the contract
+    const nft = await contract.methods.nfts(nftId).call();
 
-  for (const property of properties) {
-    const div = document.createElement('div');
-    div.classList.add('property');
-    div.innerHTML = `
-      <h3>${property.name}</h3>
-      <p>Attribute 1: ${property.attribute1}</p>
-      <p>Attribute 2: ${property.attribute2}</p>
-      <p>Attribute 3: ${property.attribute3}</p>
-    `;
-    propertyList.appendChild(div);
+    // Display the NFT's details
+    const nftDetails = document.querySelector('#nft-details');
+    nftDetails.innerHTML = `
+      <h3>${nft.name}</h3>
+      <p>Price: ${nft.price}</p>
+      <p>Image URL: ${nft.imageUrl}</p>
+      <p>Description: ${nft.description}</p>
+    `
   }
 }
+                        
+const connectButton = document.getElementById('connect-button');
+const addButton = document.getElementById('add-button');
 
-
-function searchProperties(wantedAttribute) {
-  const properties = propertyList.querySelectorAll('.property');
-  const matchingProperties = [];
-
-  for (const property of properties) {
-    const attribute1 = property.querySelector('.attribute1').textContent;
-    const attribute2 = property.querySelector('.attribute2').textContent;
-    const attribute3 = property.querySelector('.attribute3').textContent;
-
-    if (wantedAttribute === attribute1 || wantedAttribute === attribute2 || wantedAttribute === attribute3) {
-      matchingProperties.push(property);
-    }
-  }
-
-  return matchingProperties;
-}
-
-// Add an event listener to the "Go" button
-const searchButton = document.querySelector('#search-button');
-searchButton.addEventListener('click', () => {
-  const attribute1 = document.querySelector('#search-attribute-1').value;
+connectButton.addEventListener('click', async () => {
+  // Connect to wallet
+  await connectToWallet();
+  // Show add button
+  addButton.style.display = 'block';
+});
+    
+addButton.addEventListener('click', async () => {
+  // Add NFT to list
+  await addNFTToList();
   
-  const matchingProperties = searchProperties({
-    wantedAttribute: attribute1,
-  });
-  
-  displayProperties(searchProperties(attribute1));
-
-  // Do something with the matching properties (e.g. display them on the page)
 });
 
+async function addNFTToList() {
+  // Get the NFT details from the user
+  const nftName = prompt('Enter the NFT name:');
+  const nftPrice = prompt('Enter the NFT price:');
+  const nftImageUrl = prompt('Enter the NFT image URL:');
+  const nftDescription = prompt('Enter the NFT description:');
 
+  // Add the NFT to the contract using RainbowKit's API
+  await rainbow.addNFT(contract, nftName, nftPrice, nftImageUrl, nftDescription);
 
+  // Update the NFT list to show the new NFT
+  updateNFTList();
+}
 
+async function updateNFTList() {
+  // Clear the current NFT list
+  nftList.innerHTML = '';
+
+  // Get the updated list of NFTs for sale
+  const nftIds = await contract.methods.getNftIds().call();
+
+  // Display the updated list of NFTs
+  for (const nftId of nftIds) {
+    const nft = await contract.methods.nfts(nftId).call();
+    const nftElement = document.createElement('div');
+    nftElement.innerHTML = `
+      <h3>${nft.name}</h3>
+      <p>Price: ${nft.price}</p>
+      <button class="view-button" data-nft-id="${nftId}">View</button>
+    `;
+    nftList.appendChild(nftElement);
+  }
+  function searchNFTs() {
+    // Get the search query from the input field
+    var searchQuery = document.getElementById("search").value;
+
+    // Get the selected filter criteria from the checkboxes
+    var filterCriteria = [];
+    var filterElements = document.getElementsByName("filter");
+    for (var i = 0; i < filterElements.length; i++) {
+      if (filterElements[i].checked) {
+        filterCriteria.push(filterElements[i].value);
+      }
+    }
+
+    // Use the search query and filter criteria to search and filter the NFTs
+    // Your code here...
+  }
+  
+  async function filterNFTs(property1, property2, property3) {
+  // Create an array to store the filtered NFTs
+  const filteredNFTs = [];
+
+  // Get the list of NFTs for sale
+  const nftIds = await contract.methods.getNftIds().call();
+
+  // Iterate over the NFTs and check if they match the specified properties
+  for (const nftId of nftIds) {
+    const nft = await contract.methods.nfts(nftId).call();
+
+    // Check if the NFT matches all of the specified properties
+      if (nft.property1 === property1 && nft.property2 === property2 && nft.property3 === property3) {
+        // If the NFT matches, add it to the filtered array
+        filteredNFTs.push(nft);
+       }
+    }
+
+   // Return the array of filtered NFTs
+   return filteredNFTs;
+  }
+
+}
+    
+   
