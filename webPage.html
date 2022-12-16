@@ -1,46 +1,37 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Reservation Marketplace</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <header>
-    <div class="container">
-      <h1>Reservation Marketplace</h1>
-      <form>
-        <label for="search-attribute-1">Search Offers:</label>
-        <input type="text" id="search-attribute-1">
-        <button id="search-button">Go</button>
-      </form>
-    </div>
-  </header>
-  <nav>
-    <div class="container">
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Offers</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </div>
-  </nav>
-  <main>
-    <div class="container">
-      <h2>Featured Offers</h2>
-      <div class="property-list">
-        
+  <head>
+    <link rel="stylesheet" href="styles.css">
+
+    <title>My NFT Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <h1>My NFT Marketplace</h1>
+    <form>
+     <label for="search">Search:</label><br>
+     <input type="text" id="search" name="search"><br>
+     <button type="button" onclick="searchNFTs()">Submit</button>
+    </form> 
+    <form>
+     <label for="filter">Filter by:</label><br>
+     <input type="checkbox" id="filter1" name="filter" value="value1">Option 1<br>
+     <input type="checkbox" id="filter2" name="filter" value="value2">Option 2<br>
+     <input type="checkbox" id="filter3" name="filter" value="value3">Option 3<br>
+     <button type="button" onclick="filterNFTs()">Filter</button>
+    </form> 
+
+
+    <button id="connect-button">Connect Wallet</button>
+    <button id="add-button" style="display:none">Add NFT</button>
+    <div id="listings">
+      <div class="listing">
+        <img src="path/to/image.jpg" alt="NFT Image">
+          <div class="details">
+            <div class="name">NFT Name</div>
+            <div class="price">NFT Price</div>
+          </div>
       </div>
     </div>
-  </main>
-  <footer>
-    <div class="container">
-      <p>Copyright 2022</p>
-    </div>
-  </footer>
-  <button id="add-property">Add Offer</button>
-  <script>
-
-  </script>
-</body>
+  </body>
 </html>
