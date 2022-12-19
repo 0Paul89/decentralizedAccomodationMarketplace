@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as RainbowKit from 'rainbowkit';
-import abi from "./constants.js"
+import abi from './constants.js';
 
 interface INft {
   id: string;
